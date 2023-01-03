@@ -1,0 +1,280 @@
+/* game lore
+
+you are a german scientist in 2177, age unknown (manipulates Time)
+you have square glasses, you are balding, you are clean from any beard. your lab coat stinks of coffee
+you have a 5$ watch on your right wrist. you are wearing a blue shirt with a dark blue checkered pattern.
+you dont wear pants at all. you only have boxers.
+you are barefoot in the office since you are alone in your ever-dirty office that hasnt been cleaned since Summer 2170.
+you can move around easily, but finding stuff got real difficult because of the pizza boxes and hamburger wraps are everywhere and they are piling
+your office has coffee stains on the floor and on the ceiling, somehow?
+your computer is ancient technology because you
+   couldnt afford a new one. your gpu can only handle 5 exaflops per second. you cant even run crysis 4
+
+you redefined Time in 2163, when you were 19 and you just had the worst existential crisis ever
+only you are able to manipulate Time because you are simply, built different. (mutation caused by nuclear power plant failure in 2124)
+you cant rewind Time because you are only able to scale forward moving Time.
+Relative Time was found out to be based on ancient greek methods, so it was actually outdated.
+Time is actually a tangible force, you discovered how to interact with it.
+you found how to change the scale of Time across the entire universe using your consciousness that is connected to the concept of Time itself
+your thoughts influence the scale of Time, universally
+but it costs you more and more energy to think with faster processing, because your brain can only process so much information per second.
+
+annihilate into big bang = prestige
+20th upgrade universal time scaling manipulation
+you have limited lifetime, and scaling time takes off your lifetime by the product log of relative time
+700 seconds per second at 2^1024 relative time
+upgrade only available between certain threshholds so upg3 reset has a function, maybe sustaining some kind of lifeform so it advances?
+*/
+//(function () {
+let currency = 0;
+let bought = [];
+let list = {};
+let scaleoftime = 1;
+let options = {
+    displayUpdateInterval: 50,
+};
+let gamestarted = false;
+let dispupdfuncs = [];
+
+function format(x) {
+    return x.toExponential(2).replace("+", "");
+}
+
+let docCreateUpgradeButton = function (upg) {
+    let div = document.getElementById("upgrades");
+    let button = document.createElement("button");
+    button.id = `${upg.id}.buy`;
+    button.innerHTML = `${upg.name}<br>Description: ${upg.desc}<br>Bought: ${bought.length ? bought[bought.findIndex((x) => x[0] === upg.id)][1] : "0"}<br>Cost: ${
+        upg.cost > 999 ? format(upg.cost) : upg.cost
+    }`;
+    let updateDisp = () => {
+        button.innerHTML = `${upg.name}<br>Description: ${upg.desc}<br>Bought: ${bought.length ? bought[bought.findIndex((x) => x[0] === upg.id)][1] : "0"}<br>Cost: ${
+            upg.cost > 999 ? format(upg.cost) : upg.cost
+        }`;
+    };
+    dispupdfuncs.push(updateDisp);
+
+    button.onclick = function () {
+        buyUpgrade(upg.id);
+    };
+    div.appendChild(button);
+};
+function notif(text) {
+    let x = document.getElementById("notifications");
+    x.innerHTML = text + "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!";
+    setTimeout(() => {
+        x.innerHTML = text;
+    }, 200);
+}
+
+class Upgrade {
+    constructor(id, name, desc, cost, limit, func, firstBuy, onbuy, costscaling) {
+        this.id = id;
+        this.name = name;
+        this.desc = desc;
+        this.cost = cost;
+        this.limit = limit;
+        this.func = func;
+        this.firstBuy = firstBuy;
+        this.onbuy = onbuy;
+        list[id] = this;
+        docCreateUpgradeButton(this);
+    }
+}
+
+let devspeed = new Upgrade("none", "devspeed", "200x", 1, 1, function (x, timesbought) {
+    return x * 200;
+});
+
+let first = new Upgrade("first", "Ideas of Time", "Increase your time gain by 20 seconds per second.", 1, 2 ** 1024, function (x, timesbought) {
+    return x + timesbought;
+});
+
+let firstx = new Upgrade("secx", "upg1 100x", "100x", 1, 2 ^ 1024, function (x, timesbought) {
+    return x;
+});
+
+let second = new Upgrade("double", "Time Pushing Prototype 1", "Doubles your time gain.", 20000, 3, function (x, timesbought) {
+    return x * 2 ** timesbought;
+});
+
+let third = new Upgrade(
+    "manipulate",
+    "Global Time Perception Manipulation",
+    "Allows you to more precisely influence the scale of Time",
+    320000,
+    1,
+    function (x, timesbought) {
+        return x * scaleoftime;
+    },
+    function () {
+        let disp = document.getElementById("displays");
+        let increase = document.createElement("button");
+        let decrease = document.createElement("button");
+        let display = document.createElement("p");
+        display.id = "currency.scaleoftime";
+        display.innerHTML = "The current scale of time is 1.00x";
+        let boughtamount = 0;
+        let stopped = false;
+        increase.onclick = function () {
+            if (stopped) return;
+            let initialcost = 1000;
+            let thisCost = 1.7 ** boughtamount * initialcost;
+            if (currency < thisCost) return notif("insufficient currency on timescale multiply purchase");
+            scaleoftime *= 1.1;
+            currency -= thisCost;
+            boughtamount += 1;
+            increase.innerHTML = "Multiply the scale of Time with 1.01, Cost: " + format(thisCost * 1.7);
+            display.innerHTML = "The current scale of Time is " + format(scaleoftime);
+        };
+
+        function a(x) {
+            scaleoftime = x;
+            stopped = false;
+            display.innerHTML = "The current scale of Time is " + format(scaleoftime);
+            decrease.innerHTML = "Reset the scale of Time to 1";
+            decrease.onclick = b;
+        }
+        function b() {
+            //reset upg3 for 10 seconds
+            if (stopped) return;
+            stopped = true;
+            let x = new Number(scaleoftime);
+            scaleoftime = 1;
+            display.innerHTML = "The current scale of Time is " + format(scaleoftime);
+            decrease.innerHTML = "Stop resetting the scale of Time to 1";
+            decrease.onclick = function () {
+                a(x);
+            };
+        }
+
+        decrease.onclick = b;
+        increase.innerHTML = "Increase the scale of Time by 0.1, Cost: 10000";
+        decrease.innerHTML = "Reset the scale of Time to 1";
+        let div = document.createElement("div");
+        div.id = "timeman";
+        div.appendChild(increase);
+        div.appendChild(decrease);
+        disp.appendChild(div);
+        disp.appendChild(display);
+    }
+);
+
+let fourth = new Upgrade("exp", "Thought-Capable Time Self Access Before Initialization", "^1.25 your time gain.", 1e6, 1, function (x, timesbought) {
+    return x ** 1.25;
+});
+
+let fifth = new Upgrade(
+    "autobuy1",
+    "Influence of Ideas",
+    "Increments Ideas of Time log10(seconds)*2 times per second",
+    3e7,
+    1,
+    function (x, timesbought) {
+        return x;
+    },
+    function () {
+        let firstUpgradeBoughtEntry = bought[bought.findIndex((x) => x[0] == "first")];
+        setInterval(function () {
+            firstUpgradeBoughtEntry[1] += Math.floor(Math.log10(currency) * 2);
+        }, 1000);
+    }
+);
+
+let sixth = new Upgrade(
+    "2limitremove",
+    "Time Jerk Prototype 2",
+    "Increase the limit of Time Thought Function Prototype 1 by 10",
+    3e9,
+    1,
+    function (x, timesbought) {
+        return x;
+    },
+    function () {
+        let asdf = list["double"];
+        asdf.limit += 10;
+        asdf.cost = 1e10;
+        let button = document.getElementById("double.buy");
+        button.innerHTML = `${asdf.name}<br>Description: ${asdf.desc}<br>Cost: ${asdf.cost}`;
+    }
+);
+
+let seventh = new Upgrade(
+    "manipulatemore",
+    "Dysfunctional Clocks",
+    "Global Time Perception Manipulation is stronger (^1.25)",
+    3e12,
+    1,
+    function (x, timesbought) {
+        return x;
+    },
+    function () {
+        third.func = function (x, timesbought) {
+            return x * scaleoftime ** 1.25;
+        };
+    }
+);
+let cps = 0;
+function generate() {
+    let init = 0;
+    for (let i = 0; i < bought.length; i++) {
+        let upg = list[bought[i][0]];
+        let times = bought[i][1];
+        init = upg.func(init, times);
+    }
+    currency += init;
+    cps = init * 20 + (gamestarted ? 1 : 0);
+}
+
+function buyUpgrade(id) {
+    let upg = list[id];
+    let search = bought.find((x) => x[0] == id);
+    if (search && upg.limit < search[1] + 1) return notif("limit reached on upgrade " + id);
+    if (upg.cost > currency) return notif("insufficient currency on upgrade " + id);
+    currency -= upg.cost;
+    if (this.onbuy) this.onbuy();
+    if (search) {
+        search[1] += 1;
+        if (id == "first") {
+            upg.cost += 27;
+        }
+        if (id == "second") {
+            upg.cost *= 2;
+        }
+        return;
+    }
+    bought.push([id, 1]);
+    if (upg.firstBuy) upg.firstBuy();
+}
+
+function updateDisplay() {
+    let currencydisplay = document.getElementById("currency.display");
+    currencydisplay.innerHTML = `You have ${currency > 999 ? format(currency) : currency} seconds`;
+    let currencypersecond = document.getElementById("currency.persecond");
+    currencypersecond.innerHTML = `You are gaining approximately ${cps > 999 ? format(cps) : cps} seconds per second.`;
+    dispupdfuncs?.forEach((x) => {
+        try {
+            x();
+        } catch {}
+    });
+}
+
+setInterval(updateDisplay, options.displayUpdateInterval);
+
+function mainLoop() {
+    requestAnimationFrame(mainLoop);
+}
+
+let gameloop = setInterval(generate, 50);
+let button = document.createElement("button");
+button.innerHTML = "Start Time";
+button.onclick = function () {
+    mainLoop();
+    gamestarted = true;
+    setInterval(() => {
+        currency += 1;
+    }, 1000);
+    document.body.removeChild(button);
+};
+document.body.appendChild(button);
+//})();
