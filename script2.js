@@ -132,14 +132,13 @@ class Upgrade {
 
         let upg = this;
 
-        let button1 = new Audio("button1.mp3");
-        let button2 = new Audio("button2.mp3");
-
         button.onmousedown = function () {
+            let button1 = new Audio("button1.mp3");
             button1.play().then((x) => (button1.currentTime = 0));
         };
 
         button.onmouseup = function () {
+            let button2 = new Audio("button2.mp3");
             button2.play().then((x) => (button2.currentTime = 0));
         };
 
@@ -224,25 +223,23 @@ let third = new Upgrade(
             fluctdisp.innerHTML = "π⏁⟟⋔⟒ ⎎⌰⎍☊⏁⎍⏃⏁⟟⍜⋏ = " + calc2;
         };
 
-        let abutton1 = new Audio("button1.mp3");
-        let abutton2 = new Audio("button2.mp3");
-
         increase.onmousedown = function () {
+            let abutton1 = new Audio("button1.mp3");
             abutton1.play().then((x) => (abutton1.currentTime = 0));
         };
 
         increase.onmouseup = function () {
+            let abutton2 = new Audio("button2.mp3");
             abutton2.play().then((x) => (abutton2.currentTime = 0));
         };
 
-        let bbutton1 = new Audio("button1.mp3");
-        let bbutton2 = new Audio("button2.mp3");
-
         decrease.onmousedown = function () {
+            let bbutton1 = new Audio("button1.mp3");
             bbutton1.play().then((x) => (bbutton1.currentTime = 0));
         };
 
         decrease.onmouseup = function () {
+            let bbutton2 = new Audio("button2.mp3");
             bbutton2.play().then((x) => (bbutton2.currentTime = 0));
         };
 
